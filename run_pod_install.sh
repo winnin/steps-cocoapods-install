@@ -35,13 +35,13 @@ do
       echo "==> Gemfile specified CocoaPods version:"
       bundle exec pod --version
       fail_if_cmd_error "Failed to get pod version"
-      bundle exec pod install --verbose
+      bundle exec pod_install
       fail_if_cmd_error "Failed to pod install"
     else
       echo "==> System Installed CocoaPods version:"
       pod --version
       fail_if_cmd_error "Failed to get pod version"
-      pod install --verbose
+      pod_install
       fail_if_cmd_error "Failed to pod install"
     fi
   )

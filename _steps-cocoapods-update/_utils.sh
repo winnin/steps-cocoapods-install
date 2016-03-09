@@ -19,7 +19,7 @@ function print_and_do_command {
 
 #
 # This one expects a string as it's input, and will eval it
-# 
+#
 # Useful for piped commands like this: print_and_do_command_string "printf '%s' \"$filecont\" > \"$testfile_path\""
 #  where calling print_and_do_command function would write the command itself into the file as well because
 #  of the precedence order of the '>' operator
@@ -53,11 +53,31 @@ function fail_if_cmd_error {
 	fi
 }
 
+function pod_install {
+	pod --no-repo-update install
+
+	if [ $? -ne 0 ]; then
+	  echo
+	  echo "Install failed - spec are likely out of date."
+	  echo
+	  echo "Updating specs..."
+	  pod setup
+	  echo "Done updating specs. Retrying install"
+	  echo
+	  pod --no-repo-update install
+	fi
+
+	if [ $? -ne 0 ]; then
+	  echo "WARNING: Pod quick install failed! Consider moving back to Bitrise standard cocoapods installer"
+	  exit 1
+	fi
+}
+
 # EXAMPLES:
 
 # example with 'print_and_do_command_exit_on_error':
 #   print_and_do_command_exit_on_error brew install git
- 
+
 # OR with the combination of 'print and do' and 'fail':
 # print_and_do_command brew install git
 #   fail_if_cmd_error "Failed to install git!"
