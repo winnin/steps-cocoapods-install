@@ -53,26 +53,6 @@ function fail_if_cmd_error {
 	fi
 }
 
-function pod_install {
-	pod --no-repo-update install
-
-	if [ $? -ne 0 ]; then
-	  echo
-	  echo "Install failed - spec are likely out of date."
-	  echo
-	  echo "Updating specs..."
-	  pod setup
-	  echo "Done updating specs. Retrying install"
-	  echo
-	  pod --no-repo-update install
-	fi
-
-	if [ $? -ne 0 ]; then
-	  echo "WARNING: Pod quick install failed! Consider moving back to Bitrise standard cocoapods installer"
-	  exit 1
-	fi
-}
-
 # EXAMPLES:
 
 # example with 'print_and_do_command_exit_on_error':

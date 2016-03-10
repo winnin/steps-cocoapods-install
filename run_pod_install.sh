@@ -4,6 +4,27 @@ THIS_SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "${THIS_SCRIPTDIR}/_bash_utils/utils.sh"
 source "${THIS_SCRIPTDIR}/_bash_utils/formatted_output.sh"
 
+
+function pod_install {
+	pod --no-repo-update install
+
+	if [ $? -ne 0 ]; then
+	  echo
+	  echo "Install failed - spec are likely out of date."
+	  echo
+	  echo "Updating specs..."
+	  pod setup
+	  echo "Done updating specs. Retrying install"
+	  echo
+	  pod --no-repo-update install
+	fi
+
+	if [ $? -ne 0 ]; then
+	  echo "WARNING: Pod quick install failed! Consider moving back to Bitrise standard cocoapods installer"
+	  exit 1
+	fi
+}
+
 CONFIG_cocoapods_ssh_source_fix_script_path="${THIS_SCRIPTDIR}/cocoapods_ssh_source_fix.rb"
 
 write_section_to_formatted_output "### Searching for podfiles and installing the found ones"
@@ -35,15 +56,14 @@ do
       echo "==> Gemfile specified CocoaPods version:"
       bundle exec pod --version
       fail_if_cmd_error "Failed to get pod version"
-      bundle exec pod_install
-      fail_if_cmd_error "Failed to pod install"
     else
       echo "==> System Installed CocoaPods version:"
       pod --version
       fail_if_cmd_error "Failed to get pod version"
-      pod_install
-      fail_if_cmd_error "Failed to pod install"
     fi
+
+    pod_install
+    fail_if_cmd_error "Failed to pod install"
   )
   if [ $? -ne 0 ] ; then
     write_section_to_formatted_output "Could not install podfile: ${podfile}"
