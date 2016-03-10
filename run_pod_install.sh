@@ -6,17 +6,32 @@ source "${THIS_SCRIPTDIR}/_bash_utils/formatted_output.sh"
 
 
 function pod_install {
-	pod --no-repo-update install
+	if [ $1 ]; then
+		bundle exec pod --no-repo-update install
+	else
+		pod --no-repo-update install
+	fi
 
 	if [ $? -ne 0 ]; then
 	  echo
 	  echo "Install failed - spec are likely out of date."
 	  echo
 	  echo "Updating specs..."
-	  pod setup
+
+		if [ $1 ]; then
+			bundle exec pod setup
+		else
+	  	pod setup
+		fi
+
 	  echo "Done updating specs. Retrying install"
 	  echo
-	  pod --no-repo-update install
+
+		if [ $1 ]; then
+			bundle exec pod --no-repo-update install
+		else
+	  	pod --no-repo-update install
+		fi
 	fi
 
 	if [ $? -ne 0 ]; then
@@ -56,14 +71,15 @@ do
       echo "==> Gemfile specified CocoaPods version:"
       bundle exec pod --version
       fail_if_cmd_error "Failed to get pod version"
+	    pod_install true
+	    fail_if_cmd_error "Failed to pod install"
     else
       echo "==> System Installed CocoaPods version:"
       pod --version
       fail_if_cmd_error "Failed to get pod version"
+	    pod_install false
+	    fail_if_cmd_error "Failed to pod install"
     fi
-
-    pod_install
-    fail_if_cmd_error "Failed to pod install"
   )
   if [ $? -ne 0 ] ; then
     write_section_to_formatted_output "Could not install podfile: ${podfile}"
