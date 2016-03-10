@@ -20,9 +20,9 @@ function pod_install {
 	  echo
 
 		if [ $1 ]; then
-			bundle exec pod --no-repo-update install
+			bundle exec pod install
 		else
-	  	pod --no-repo-update install
+	  	pod install
 		fi
 	fi
 
