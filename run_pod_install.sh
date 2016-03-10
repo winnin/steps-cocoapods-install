@@ -16,15 +16,7 @@ function pod_install {
 	  echo
 	  echo "Install failed - spec are likely out of date."
 	  echo
-	  echo "Updating specs..."
-
-		if [ $1 ]; then
-			bundle exec pod setup
-		else
-	  	pod setup
-		fi
-
-	  echo "Done updating specs. Retrying install"
+	  echo "Retrying install with repo update"
 	  echo
 
 		if [ $1 ]; then
